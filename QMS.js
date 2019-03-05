@@ -45,7 +45,7 @@ function onLoad() {
 (function () {
 
     $.ajax({
-        url: `${_spPageContextInfo.webAbsoluteUrl}/_api/Web/Lists(guid'aa4ef5d1-2a45-4aee-8dc6-1fa297c76111')/items?$select=Id,Document_x0020_ID,FileRef,Clause/Title&$expand=Clause,ContentType&$orderby=Clause/Title asc&$top=2000`,
+        url: `${_spPageContextInfo.webAbsoluteUrl}/_api/Web/Lists(guid'aa4ef5d1-2a45-4aee-8dc6-1fa297c76111')/items?$select=Id,Document_x0020_ID,FileRef,Clause/Title&$expand=Clause,ContentType&$orderby=Clause/Title asc&$top=3`,
         method: "GET",
         headers: {
             "Accept": "application/json; odata=verbose",
@@ -127,7 +127,6 @@ function callback(Id, Section_Number, Document_Title, Document_ID) {
                                     r_Date = revDate.trim();
                                     revision_result = Revision.trim();
 
-
                                     var entry = {
                                         Current_Revision: c_Rev,
                                         Revision_Date: r_Date
@@ -147,8 +146,7 @@ function callback(Id, Section_Number, Document_Title, Document_ID) {
                 //     item.id = i + 1;
                 // });
 
-                to_print(entries, Id, Section_Number, Document_Title, Document_ID);
-
+                // to_print(entries, Id, Section_Number, Document_Title, Document_ID);
 
             },
             error: function (error) {
@@ -163,52 +161,111 @@ function callback(Id, Section_Number, Document_Title, Document_ID) {
 
 function to_print(entries, Id, Section_Number, Document_Title, Document_ID) {
 
-    var td_current_rev = "";
-    var td_rev_date = "";
 
-    var baseHTML = "";
-    // var children = "";
-    var max_rowspan = 0;
-    var length_entries = entries.length;
-
-    $.each(entries, function (key, value) {
-
-        var value_length = Object.keys(value).length;
-
-
-
-        if (value.Current_Revision !== "") {
-            max_rowspan++;
-
-            baseHTML = `<tr><td rowspan="2" class="tds">${Section_Number}</td>
-                        <td rowspan="2" class="tds">${Document_Title}</td>
-                        <td rowspan="2" class="tds">${Document_ID}</td>`
+    var APIData = {
+        Section_No: Section_Number,
+        Document_Title: Document_Title,
+        Document_ID: Document_ID,
+        Revisions: [{
+                No: '01',
+                Approval_Date: '8/23/2017'
+            },
+            {
+                No: '02',
+                Approval_Date: '3/12/2018'
+            },
+        ],
+        remarks: ['OK', 'OK'],
+        Signature: 'Signature'
+    };
 
 
-            td_current_rev += `<td class="tds" colspan="1000">${value.Current_Revision}</td>`;
-            td_rev_date += `<td class="tds" colspan="1000">${value.Revision_Date}</td>`;
+    $.views.helpers({
+        getNumberWithOrdinal: function (n) {
+            var s = ["th", "st", "nd", "rd"],
+                v = n % 100;
+            return n + (s[(v - 20) % 10] || s[v] || s[0]);
+        },
+        makeArray: function (count) {
+            var array = [];
+            if (count) {
+                array[count - 1] = {};
+            }
+            return array;
         }
-
     });
 
-    $('#tabler').append(`
-    <tr>
-        <td class="tds" colspan=${max_rowspan}>
-            Sample
-        </td>
-    </tr>
-    `);
+    var template = $.templates("#theTmpl");
+
+    var data = {
+        maxVersions: 1,
+        maxRemarks: 1,
+        rows: APIData
+    };
+
+    // APIData.forEach(function (row) {
+    // var versions = row.Revisions.length;
+    //     if (versions > data.maxVersions) {
+    //         data.maxVersions = versions;
+    //     }
+    //     var remarks = row.remarks.length;
+    //     if (remarks > data.maxRemarks) {
+    //         data.maxRemarks = remarks;
+    //     }
+    // });
+    var arr_entries = [];
+    for (let i = 0; i < entries.length; i++) {
+        arr_entries.push(entries[i]);
+
+    }
+    console.log(arr_entries);
+
+    template.link("#result", data);
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // var td_current_rev = "";
+    // var td_rev_date = "";
+
+    // var baseHTML = "";
+    // // var children = "";
+    // var max_rowspan = 0;
+    // var length_entries = entries.length;
+
+    // $.each(entries, function (key, value) {
+
+    //     if (value.Current_Revision !== "") {
+    //         max_rowspan++;
+
+    //         baseHTML = `<tr><td rowspan="2" class="tds">${Section_Number}</td>
+    //                     <td rowspan="2" class="tds">${Document_Title}</td>
+    //                     <td rowspan="2" class="tds">${Document_ID}</td>`
+    //         td_current_rev += `<td class="tds" colspan="1000">${value.Current_Revision}</td>`;
+    //         td_rev_date += `<td class="tds" colspan="1000">${value.Revision_Date}</td>`;
+    //     }
+
+    // });
 
     // $('#tabler').append(`${baseHTML}${td_current_rev}</tr>
     //         <tr>${td_rev_date}</tr>
     //     `);
 
-    console.log(max_rowspan);
-
-
 
 
 }
+
+
+
 
 
 
