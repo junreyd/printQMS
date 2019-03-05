@@ -4,6 +4,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" x-undefined="" />
         <!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css"> -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+        <script src="https://www.jsviews.com/download/jsrender.min.js"></script>
+        <script src="https://www.jsviews.com/download/jsviews.min.js"></script>
 
 
 
@@ -83,11 +87,65 @@
         }
     </style>
 
+    <body>
+        <div id="result"></div>
+        <script id="theTmpl" type="text/x-jsrender">
+            <table border="1" style="width:100%;">
+            <thead>
+                <tr>
+                    <th rowspan="2">ID</th>
+                    <th rowspan="2">Document Name</th>
+                    <th rowspan="2">Document ID</th>
+                    {{for ~makeArray(maxVersions)}}
+                    <th>Current Version</th>
+                    {{/for}}
+                    <th colspan="{{:maxRemarks}}">Remarks</th>
+                    <th rowspan="2">Signature</th>
+                </tr>
+                <tr>
+                    {{for ~makeArray(maxVersions)}}
+                    <th>Revision Date</th>
+                    {{/for}}
+                    {{for ~makeArray(maxRemarks)}}
+                    <th rowspan="2">{{:~getNumberWithOrdinal(#index+1)}}</th>
+                    {{/for}}
+                </tr>
+            </thead>
+            <tbody id="resultAppend">
+                {{for rows ~maxVersions = maxVersions ~maxRemarks = maxRemarks}}
+                <tr>
+                    <td rowspan="2">{{:Section_No}}</td>
+                    <td rowspan="2">{{:Document_Title}}</td>
+                    <td rowspan="2">{{:Document_ID}}</td>
+                    {{for Revisions}}
+                    <td>{{:#data.No}}</td>
+                    {{/for}}
+                    {{for ~makeArray(~maxVersions - Revisions.length)}}
+                    <td></td>
+                    {{/for}}
+                    {{for remarks}}
+                    <td rowspan="2">{{:#data}}</td>
+                    {{/for}}
+                    {{for ~makeArray(~maxRemarks - remarks.length)}}
+                    <td rowspan="2"></td>
+                    {{/for}}
+                    <td rowspan="2">{{:Signature}}</td>
+                </tr>
+                <tr>
+                    {{for Revisions}}
+                    <td>{{:#data.Approval_Date}}</td>
+                    {{/for}}
+                    {{for ~makeArray(~maxVersions - Revisions.length)}}
+                    <td></td>
+                    {{/for}}
+                </tr>
+                {{/for}}
+            </tbody>
+        </table>
+    </script>
+        <!-- <input type="button" id="click" value="QM" style="display: none;"> -->
 
-
-    <!-- <input type="button" id="click" value="QM" style="display: none;"> -->
-
-    <table id="testTable" rules="groups" frame="hsides"></table>
+        <!-- <table id="testTable" rules="groups" frame="hsides"></table>
 
     <body>
 
@@ -131,8 +189,8 @@
 
 
 
-            <tbody>
-                <!-- <tr>
+            <tbody> -->
+        <!-- <tr>
                     <td class="tds" rowspan="2" height="40" align="center" valign="bottom"><b>
                             <font color="#000000">Clause/ Section No.</font>
                         </b></td>
@@ -175,8 +233,8 @@
 
 
 
-                <!-- data starts here -->
-                <!-- <tr>
+        <!-- data starts here -->
+        <!-- <tr>
                     <td class="tds" rowspan="2" height="40" align="center" valign="bottom"><b>
                             <font color="#000000"></font>
                         </b></td>
@@ -221,8 +279,8 @@
                 </tr> -->
 
 
-            </tbody>
-        </table>
+        <!-- </tbody>
+        </table> -->
         <!-- ************************************************************************** -->
 
 
@@ -231,8 +289,10 @@
     </body>
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.0/semantic.min.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
     <script src="/SiteAssets/Scripts/Print QMS and ISMS/QMS.js"></script>
+
 
 
 </html>
