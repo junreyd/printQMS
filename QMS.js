@@ -45,7 +45,7 @@ function onLoad() {
 (function () {
 
     $.ajax({
-        url: `${_spPageContextInfo.webAbsoluteUrl}/_api/Web/Lists(guid'aa4ef5d1-2a45-4aee-8dc6-1fa297c76111')/items?$select=Id,Document_x0020_ID,FileRef,Clause/Title&$expand=Clause,ContentType&$orderby=Clause/Title asc&$top=3`,
+        url: `${_spPageContextInfo.webAbsoluteUrl}/_api/Web/Lists(guid'aa4ef5d1-2a45-4aee-8dc6-1fa297c76111')/items?$select=Id,Document_x0020_ID,FileRef,Clause/Title&$expand=Clause,ContentType&$orderby=Clause/Title asc&$top=2`,
         method: "GET",
         headers: {
             "Accept": "application/json; odata=verbose",
@@ -92,8 +92,6 @@ function callback(Id, Section_Number, Document_Title, Document_ID) {
 
     if (strFirstSecond == substring || each_sub.some(el => Document_ID.includes(el))) {
 
-
-
         $.ajax({
             url: `${_spPageContextInfo.webAbsoluteUrl}/_layouts/15/versions.aspx?list={aa4ef5d1-2a45-4aee-8dc6-1fa297c76111}&ID=${Id}`,
             method: "GET",
@@ -128,8 +126,8 @@ function callback(Id, Section_Number, Document_Title, Document_ID) {
                                     revision_result = Revision.trim();
 
                                     var entry = {
-                                        Current_Revision: c_Rev,
-                                        Revision_Date: r_Date
+                                        No: c_Rev,
+                                        Approval_Date: r_Date
                                     };
                                     entries.push(entry);
 
@@ -141,12 +139,12 @@ function callback(Id, Section_Number, Document_Title, Document_ID) {
                         }
                     });
                 }
-
                 // entries.forEach((item, i) => {
                 //     item.id = i + 1;
                 // });
 
-                // to_print(entries, Id, Section_Number, Document_Title, Document_ID);
+
+                to_print(entries, Id, Section_Number, Document_Title, Document_ID);
 
             },
             error: function (error) {
@@ -159,11 +157,27 @@ function callback(Id, Section_Number, Document_Title, Document_ID) {
 
 
 
-function to_print(entries, Id, Section_Number, Document_Title, Document_ID) {
 
 
-    var APIData = {
-        Section_No: Section_Number,
+
+
+
+
+function to_print(Revisions, Id, Section_No, Document_Title, Document_ID) {
+
+    var API = [{
+        Section_No,
+        Document_Title,
+        Document_ID,
+        Revisions,
+        remarks: ['OK', 'OK', 'OK'],
+        Signature: 'Signature'
+
+    }];
+
+
+    var APIData = [{
+        Section_No: Section_No,
         Document_Title: Document_Title,
         Document_ID: Document_ID,
         Revisions: [{
@@ -175,9 +189,14 @@ function to_print(entries, Id, Section_Number, Document_Title, Document_ID) {
                 Approval_Date: '3/12/2018'
             },
         ],
-        remarks: ['OK', 'OK'],
+        remarks: ['OK', 'OK', 'OK'],
         Signature: 'Signature'
-    };
+    }];
+
+    console.log(API);
+    console.log(APIData);
+
+
 
 
     $.views.helpers({
@@ -203,64 +222,20 @@ function to_print(entries, Id, Section_Number, Document_Title, Document_ID) {
         rows: APIData
     };
 
-    // APIData.forEach(function (row) {
-    // var versions = row.Revisions.length;
-    //     if (versions > data.maxVersions) {
-    //         data.maxVersions = versions;
-    //     }
-    //     var remarks = row.remarks.length;
-    //     if (remarks > data.maxRemarks) {
-    //         data.maxRemarks = remarks;
-    //     }
-    // });
-    var arr_entries = [];
-    for (let i = 0; i < entries.length; i++) {
-        arr_entries.push(entries[i]);
+    APIData.forEach(function (row) {
+        var versions = row.Revisions.length;
+        if (versions > data.maxVersions) {
+            data.maxVersions = versions;
+        }
+        var remarks = row.remarks.length;
+        if (remarks > data.maxRemarks) {
+            data.maxRemarks = remarks;
+        }
+        //     console.log(row.Revisions.length);
+    });
 
-    }
-    console.log(arr_entries);
 
     template.link("#result", data);
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // var td_current_rev = "";
-    // var td_rev_date = "";
-
-    // var baseHTML = "";
-    // // var children = "";
-    // var max_rowspan = 0;
-    // var length_entries = entries.length;
-
-    // $.each(entries, function (key, value) {
-
-    //     if (value.Current_Revision !== "") {
-    //         max_rowspan++;
-
-    //         baseHTML = `<tr><td rowspan="2" class="tds">${Section_Number}</td>
-    //                     <td rowspan="2" class="tds">${Document_Title}</td>
-    //                     <td rowspan="2" class="tds">${Document_ID}</td>`
-    //         td_current_rev += `<td class="tds" colspan="1000">${value.Current_Revision}</td>`;
-    //         td_rev_date += `<td class="tds" colspan="1000">${value.Revision_Date}</td>`;
-    //     }
-
-    // });
-
-    // $('#tabler').append(`${baseHTML}${td_current_rev}</tr>
-    //         <tr>${td_rev_date}</tr>
-    //     `);
-
-
 
 }
 
