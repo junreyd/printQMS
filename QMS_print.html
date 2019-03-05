@@ -112,6 +112,7 @@
                 </tr>
             </thead>
             <tbody id="resultAppend">
+                <tr>
                 {{for rows ~maxVersions = maxVersions ~maxRemarks = maxRemarks}}
                 <tr>
                     <td rowspan="2">{{:Section_No}}</td>
@@ -140,9 +141,55 @@
                     {{/for}}
                 </tr>
                 {{/for}}
+                </tr>
             </tbody>
         </table>
     </script>
+
+
+
+
+
+        <!-- {{for rows ~maxVersions = maxVersions ~maxRemarks = maxRemarks}}
+                <tr>
+                    <td rowspan="2">{{:Section_No}}</td>
+                    <td rowspan="2">{{:Document_Title}}</td>
+                    <td rowspan="2">{{:Document_ID}}</td>
+                    {{for Revisions}}
+                    <td>{{:#data.No}}</td>
+                    {{/for}}
+                    {{for ~makeArray(~maxVersions - Revisions.length)}}
+                    <td></td>
+                    {{/for}}
+                    {{for remarks}}
+                    <td rowspan="2">{{:#data}}</td>
+                    {{/for}}
+                    {{for ~makeArray(~maxRemarks - remarks.length)}}
+                    <td rowspan="2"></td>
+                    {{/for}}
+                    <td rowspan="2">{{:Signature}}</td>
+                </tr>
+                <tr>
+                    {{for Revisions}}
+                    <td>{{:#data.Approval_Date}}</td>
+                    {{/for}}
+                    {{for ~makeArray(~maxVersions - Revisions.length)}}
+                    <td></td>
+                    {{/for}}
+                </tr>
+                {{/for}} -->
+
+
+
+
+
+
+
+
+
+
+
+
         <!-- <input type="button" id="click" value="QM" style="display: none;"> -->
 
         <!-- <table id="testTable" rules="groups" frame="hsides"></table>
