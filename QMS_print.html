@@ -3,108 +3,86 @@
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" x-undefined="" />
-        <!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css"> -->
+        <link type="text/css" rel="stylesheet" href="/SiteAssets/Scripts/Print QMS and ISMS/qms_style.css" />
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-
         <script src="https://www.jsviews.com/download/jsrender.min.js"></script>
         <script src="https://www.jsviews.com/download/jsviews.min.js"></script>
 
-
-
+        <link href="https://www.jsviews.com/samples/samples.css" rel="stylesheet" />
         <title>QMS</title>
     </head>
-    <style>
-        #DeltaPlaceHolderPageTitleInTitleArea {
-            display: none;
-        }
-
-        #ms-designer-ribbon {
-            display: none;
-        }
-
-        .ms-cui-topBar2 {
-            display: none;
-        }
-
-        #scriptWPQ2 {
-            display: none;
-        }
-
-        .ms-list-emptyText-compact {
-            display: none;
-        }
-
-        .ms-webpart-zone {
-            margin-left: -6px;
-        }
-
-        body,
-        div,
-        table,
-        thead,
-        tbody,
-        tfoot,
-        tr,
-        th,
-        td,
-        p {
-            font-family: "Calibri";
-            font-size: inherit
-        }
-
-        a.comment-indicator:hover+comment {
-            background: #ffd;
-            position: absolute;
-            display: block;
-            border: 1px solid black;
-            padding: 0.5em;
-        }
-
-        a.comment-indicator {
-            background: red;
-            display: inline-block;
-            border: 1px solid black;
-            width: 0.5em;
-            height: 0.5em;
-        }
-
-        comment {
-            display: none;
-        }
-
-        #tabler {
-            width: 92%;
-            margin-left: 70px;
-            empty-cells: show;
-        }
 
 
-        .tds {
-            border-top: 1px solid #000000;
-            border-bottom: 1px solid #000000;
-            border-left: 1px solid #000000;
-            border-right: 1px solid #000000;
-        }
-    </style>
 
     <body>
+        <div id="loader_show_hide" style="display:none">
+            <div id="loader" style="display:table; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; background: #fff; opacity: 0.8;">
+                <div style="display:table-cell; vertical-align:middle; text-align: center;">
+                    <span class="loading__anim"></span><br>
+                    <h2>Loading</h2>
+                </div>
+            </div>
+        </div>
+
+
+        <input type="submit" class="btn-style" id="quality_manual" value="Quality Manual" style="margin-bottom: 12px;">
+        <input type="submit" class="btn-style" id="forms_checklist" value="Forms/Checklist" style="margin-bottom: 12px;">
+        <input type="submit" class="btn-style" id="pm_or_wi" value="Procedure Manual or Work Instruction" style="margin-bottom: 12px;">
+        <input type="button" class="btn-style" id="printData" value="Print" style="margin-bottom: 12px; float: right;">
+
+        <div id="notfound" style="display:none;">
+            <div class="notfound">
+                <h2>Oops! you have no data selected.</h2>
+                <p>Please click the button at the top and choose one to show.</p>
+            </div>
+        </div>
+
+
+
+
+
+        <table style="width:100%; border-bottom: none!important; border-collapse: collapse;">
+            <tbody id="person">
+            </tbody>
+        </table>
+
+        <script id="personTmpl" type="text/x-jsrender">
+            <tr>
+                <td style="width:-29px; padding: 19px 19px; width: 10px; padding-right: 0px; border: none;">
+                <img src='{{:image}}' style="width: 110px;"/>
+                </td>
+                <td style="padding: 12px 25px; border: none;">
+                   <b>House Of IT<br><br>
+                    Document Distribution Record<br><br>
+                    Quality Manual</b>
+                </td>
+                <td style="float:right; padding-top: 17px; border: none; padding-right: 64px;">
+                    <b>Doc. No. LS-DDR-001<br><br>
+                    Effectivity: June 1, 2017<br><br>
+                    Revision: 0</b>
+                </td>
+            </tr>
+        </script>
+
         <div id="result"></div>
         <script id="theTmpl" type="text/x-jsrender">
+
             <table border="1" style="width:100%;">
             <thead>
                 <tr>
-                    <th rowspan="2">ID</th>
+                    <th rowspan="2">Clause/ Section No.</th>
                     <th rowspan="2">Document Name</th>
                     <th rowspan="2">Document ID</th>
                     {{for ~makeArray(maxVersions)}}
-                    <th>Current Version</th>
+                    <th>Revision No.</th>
                     {{/for}}
+                    <th rowspan="2">New Entry</th>
                     <th colspan="{{:maxRemarks}}">Remarks</th>
                     <th rowspan="2">Signature</th>
                 </tr>
                 <tr>
                     {{for ~makeArray(maxVersions)}}
-                    <th>Revision Date</th>
+                    <th>Approval Date</th>
                     {{/for}}
                     {{for ~makeArray(maxRemarks)}}
                     <th rowspan="2">{{:~getNumberWithOrdinal(#index+1)}}</th>
@@ -112,250 +90,51 @@
                 </tr>
             </thead>
             <tbody id="resultAppend">
+
+                {{for rows ~maxVersions = maxVersions ~maxRemarks = maxRemarks sort="Section_No"}}
                 <tr>
-                {{for rows ~maxVersions = maxVersions ~maxRemarks = maxRemarks}}
-                <tr>
-                    <td rowspan="2">{{:Section_No}}</td>
-                    <td rowspan="2">{{:Document_Title}}</td>
-                    <td rowspan="2">{{:Document_ID}}</td>
+                    <td nowrap style="text-align: center;" rowspan="2">{{:Section_No}}</td>
+                    <td nowrap rowspan="2">{{:Document_Title}}</td>
+                    <td nowrap rowspan="2">{{:Document_ID}}</td>
                     {{for Revisions}}
-                    <td>{{:#data.No}}</td>
+                        <td nowrap>{{:#data.No}}</td>
                     {{/for}}
                     {{for ~makeArray(~maxVersions - Revisions.length)}}
-                    <td></td>
+                        <td></td>
                     {{/for}}
+                    <td nowrap rowspan="2">{{:New_Entry}}</td>
                     {{for remarks}}
-                    <td rowspan="2">{{:#data}}</td>
+                        <td rowspan="2" nowrap>{{:#data}}</td>
                     {{/for}}
                     {{for ~makeArray(~maxRemarks - remarks.length)}}
-                    <td rowspan="2"></td>
+                        <td rowspan="2"></td>
                     {{/for}}
                     <td rowspan="2">{{:Signature}}</td>
                 </tr>
                 <tr>
                     {{for Revisions}}
-                    <td>{{:#data.Approval_Date}}</td>
+                        <td>{{:#data.Approval_Date}}</td>
                     {{/for}}
                     {{for ~makeArray(~maxVersions - Revisions.length)}}
-                    <td></td>
+                        <td></td>
                     {{/for}}
                 </tr>
                 {{/for}}
-                </tr>
+
             </tbody>
         </table>
     </script>
-
-
-
-
-
-        <!-- {{for rows ~maxVersions = maxVersions ~maxRemarks = maxRemarks}}
-                <tr>
-                    <td rowspan="2">{{:Section_No}}</td>
-                    <td rowspan="2">{{:Document_Title}}</td>
-                    <td rowspan="2">{{:Document_ID}}</td>
-                    {{for Revisions}}
-                    <td>{{:#data.No}}</td>
-                    {{/for}}
-                    {{for ~makeArray(~maxVersions - Revisions.length)}}
-                    <td></td>
-                    {{/for}}
-                    {{for remarks}}
-                    <td rowspan="2">{{:#data}}</td>
-                    {{/for}}
-                    {{for ~makeArray(~maxRemarks - remarks.length)}}
-                    <td rowspan="2"></td>
-                    {{/for}}
-                    <td rowspan="2">{{:Signature}}</td>
-                </tr>
-                <tr>
-                    {{for Revisions}}
-                    <td>{{:#data.Approval_Date}}</td>
-                    {{/for}}
-                    {{for ~makeArray(~maxVersions - Revisions.length)}}
-                    <td></td>
-                    {{/for}}
-                </tr>
-                {{/for}} -->
-
-
-
-
-
-
-
-
-
-
-
-
-        <!-- <input type="button" id="click" value="QM" style="display: none;"> -->
-
-        <!-- <table id="testTable" rules="groups" frame="hsides"></table>
-
-    <body>
-
-        <table id="tabler" cellspacing="0" border="0">
-
-            <tr>
-                <td rowspan="4" height="84" align="center" valign="bottom">
-                    <font color="#000000"><br><img src="https://intranet.houseofit.com.au/SiteAssets/Logo/hoit logo.png"
-                            width="99" height="61" hspace="29" vspace="13">
-                    </font>
-                </td>
-            </tr>
-            <tr>
-                <td align="left" valign="bottom"><b>
-                        <font size="4" color="#000000">House of IT</font>
-                    </b></td>
-
-                <td align="left" valign="bottom">
-                    <font size="1" color="#000000">Doc. No. LS-DDR-001</font>
-                </td>
-            </tr>
-            <tr>
-                <td align="left" valign="bottom"><b>
-                        <font color="#000000">Document Distribution Record</font>
-                    </b></td>
-
-                <td align="left" valign="bottom">
-                    <font size="1" color="#000000">Effectivity: June 1, 2017</font>
-                </td>
-            </tr>
-            <tr>
-                <td align="left" valign="bottom">
-                    <font color="#FF0000">Forms/ Checklist</font>
-                </td>
-
-                <td align="left" valign="bottom">
-                    <font size="1" color="#000000">Revision: 0</font>
-                </td>
-            </tr>
-
-
-
-
-            <tbody> -->
-        <!-- <tr>
-                    <td class="tds" rowspan="2" height="40" align="center" valign="bottom"><b>
-                            <font color="#000000">Clause/ Section No.</font>
-                        </b></td>
-
-                    <td class="tds" rowspan="2" align="center" valign="middle"><b>
-                            <font color="#000000">Document Title</font>
-                        </b></td>
-
-                    <td class="tds" rowspan="2" align="center" valign="middle"><b>
-                            <font color="#000000">Doc. Control No.</font>
-                        </b></td>
-                    <td class="tds" rowspan="2" align="center" valign="middle"><b>
-                            <font color="#000000">Revision No.</font>
-                        </b></td>
-                    <td class="tds" rowspan="2" align="center" valign="middle"><b>
-                            <font color="#000000">Approval Date</font>
-                        </b></td>
-
-                    <td class="tds" colspan="2" align="center" valign="middle"><b>
-                            <font color="#000000">Remarks</font>
-                        </b></td>
-
-                    <td class="tds" rowspan="2" align="center" valign="middle"><b>
-                            <font color="#000000">Signatory</font>
-                        </b></td>
-                </tr>
-
-                <tr>
-
-                    <td class="tds" align="center" valign="middle"><b>
-                            <font color="#000000">1st</font>
-                        </b></td>
-                    <td class="tds" align="center" valign="middle"><b>
-                            <font color="#000000">2nd</font>
-                        </b></td>
-                </tr> -->
-
-
-
-
-
-
-        <!-- data starts here -->
-        <!-- <tr>
-                    <td class="tds" rowspan="2" height="40" align="center" valign="bottom"><b>
-                            <font color="#000000"></font>
-                        </b></td>
-
-                    <td class="tds" rowspan="2" align="center" valign="middle"><b>
-                            <font color="#000000"></font>
-                        </b></td>
-
-                    <td class="tds" rowspan="2" align="center" valign="middle"><b>
-                            <font color="#000000"></font>
-                        </b></td>
-
-
-                    <td class="tds" align="center" valign="middle"><b>
-                            <font color="#000000">52</font>
-                        </b></td>
-
-                    <td class="tds" align="center" valign="middle"><b>
-                            <font color="#000000">52</font>
-                        </b></td>
-                    <td class="tds" rowspan="2" align="center" valign="middle"><b>
-                            <font color="#000000">1st Remarks</font>
-                        </b></td>
-
-                    <td class="tds" rowspan="2" align="center" valign="middle"><b>
-                            <font color="#000000">2nd Remarks</font>
-                        </b></td>
-
-                    <td class="tds" rowspan="2" align="center" valign="middle"><b>
-                            <font color="#000000">Signatory</font>
-                        </b></td>
-                </tr>
-
-
-                <tr>
-                    <td class="tds" align="center" valign="middle"><b>
-                            <font color="#000000">25</font>
-                        </b></td>
-                    <td class="tds" align="center" valign="middle"><b>
-                            <font color="#000000">25</font>
-                        </b></td>
-                </tr> -->
-
-
-        <!-- </tbody>
-        </table> -->
-        <!-- ************************************************************************** -->
+        <!-- <b>Sort numbers:</b>
+{{for amounts sort=true}}
+{{:}},
+{{/for}}
+<hr /> -->
 
 
 
 
     </body>
 
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.0/semantic.min.js"></script> -->
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
     <script src="/SiteAssets/Scripts/Print QMS and ISMS/QMS.js"></script>
 
-
-
 </html>
-
-
-
-<!-- 
-
-<tr>
-section number = 1 column
-document title = 1 column
-document id = 1 column
-
-current revision / revision date = 1 column 2 rows
-
-</tr>
-
-
- -->
